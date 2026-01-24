@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -6,6 +6,7 @@ import Image from "next/image";
 import TradingScrollStack from "./components/TradingScrollStack";
 import BestScrollStack from "./components/BestScrollStack";
 import Squares from "./components/Squares";
+import { sdk } from '@farcaster/miniapp-sdk';
 
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
@@ -26,6 +27,10 @@ export default function LandingPage() {
   const chainsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    sdk.actions.ready();
+  }, []);
+
+  useEffect(() => {
     setIsLoaded(true);
     // Set window height only on client side
     if (typeof window !== 'undefined') {
@@ -39,7 +44,6 @@ export default function LandingPage() {
       return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
-
   // Handle scroll and header visibility based on scroll direction
   useEffect(() => {
     // Skip this effect on server-side
@@ -285,7 +289,7 @@ export default function LandingPage() {
                 </h1>
               </div>
               <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-                One Look. One tap. One Trade.
+                One Look. One Tap. One Trade.
               </p>
               <p className="text-xs md:text-sm text-gray-400">
                 Powered by Account Abstraction
