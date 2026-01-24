@@ -31,10 +31,9 @@ export async function GET() {
       "tags": ["defi", "baseapp", "trade", "tap-to-trade", "gasless"],
       "heroImageUrl": "https://dash-trading.vercel.app/og-banner.png",
       "tagline": "One Look. One Tap. One Trade",
-      "ogTitle": "Dash",
+      "ogTitle": "Dash Trade",
       "ogDescription": "Dash turns decisions into instant execution",
-      "ogImageUrl": "https://dash-trading.vercel.app/og-banner.png",
-      "noindex": false
+      "ogImageUrl": "https://dash-trading.vercel.app/og-banner.png"
     }
   });
 }
