@@ -27,49 +27,6 @@ const cinzelDecorative = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Dash',
-  description: 'Decentralized Exchange with Advanced Trading Features',
-  openGraph: {
-    title: 'Dash',
-    description: 'Decentralized Exchange with Advanced Trading Features',
-    url: 'https://dash-trading.vercel.app',
-    siteName: 'Dash',
-    images: [
-      {
-        url: '/images/og-banner.png',
-        width: 1200,
-        height: 630,
-        alt: 'Dash Banner',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Dash',
-    description: 'Decentralized Exchange with Advanced Trading Features',
-    images: ['/images/og-banner.png'],
-    creator: '@dashfinance',
-  },
-  other: {
-    'fc:frame': 'vNext',
-    'fc:frame:image': 'https://dash-trading.vercel.app/api/frame/image?view=main',
-    'fc:frame:image:aspect_ratio': '1.91:1',
-    'fc:frame:post_url': 'https://dash-trading.vercel.app/api/frame',
-    'fc:frame:button:1': '📊 Chart',
-    'fc:frame:button:1:action': 'post',
-    'fc:frame:button:1:target': 'https://dash-trading.vercel.app/api/frame?action=chart',
-    'fc:frame:button:2': '🔗 Connect',
-    'fc:frame:button:2:action': 'post',
-    'fc:frame:button:2:target': 'https://dash-trading.vercel.app/api/frame?action=connect',
-    'fc:frame:button:3': '💰 Claim USDC',
-    'fc:frame:button:3:action': 'post',
-    'fc:frame:button:3:target': 'https://dash-trading.vercel.app/api/frame?action=claim',
-    'fc:frame:button:4': '🪙 Coins',
-    'fc:frame:button:4:action': 'post',
-    'fc:frame:button:4:target': 'https://dash-trading.vercel.app/api/frame?action=coins',
-  },
 };
 
 export async function generateMetadata(): Promise<Metadata> {
