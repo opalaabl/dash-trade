@@ -14,26 +14,26 @@ return Response.json({
   },
   "miniapp": {
     "version": "1",
-    "name": "Dash",
-    "homeUrl": "https://ex.co",
-    "iconUrl": "https://ex.co/i.png",
-    "splashImageUrl": "https://ex.co/l.png",
+    "name": "Dash Trade",
+    "homeUrl": "https://dash-trading.vercel.app/",
+    "iconUrl": "https://dash-trading.vercel.app/dash-polos.png",
+    "splashImageUrl": "https://dash-trading.vercel.app/og-banner.png",
     "splashBackgroundColor": "#000000",
-    "webhookUrl": "https://ex.co/api/webhook",
+    "webhookUrl": "https://dash-trading.vercel.app/api/webhook",
     "subtitle": "One Look. One Tap. One Trade",
     "description": "Dash turns decisions into instant execution.",
     "screenshotUrls": [
-      "https://ex.co/s1.png",
-      "https://ex.co/s2.png",
-      "https://ex.co/s3.png"
+      "https://dash-trading.vercel.app/TapPosition.png",
+      "https://dash-trading.vercel.app/TapProfit.png",
+      "https://dash-trading.vercel.app/DEX.png"
     ],
     "primaryCategory": "finance",
     "tags": ["defi", "baseapp", "trade", "tap-to-trade", "gasless"],
-    "heroImageUrl": "https://ex.co/og.png",
+    "heroImageUrl": "https://dash-trading.vercel.app/og-banner.png",
     "tagline": "One Look. One Tap. One Trade",
     "ogTitle": "Dash",
     "ogDescription": "Dash turns decisions into instant execution",
-    "ogImageUrl": "https://ex.co/og.png",
+    "ogImageUrl": "https://dash-trading.vercel.app/og-banner.png",
     "noindex": true
   }
 }); 
