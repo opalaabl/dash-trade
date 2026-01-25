@@ -5,6 +5,7 @@ import { Inter, IBM_Plex_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
 import { Providers } from './providers';
 import { SidebarProvider } from '../contexts/SidebarContext';
+import { minikitConfig } from '../../minikit.config';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,21 +27,23 @@ const cinzelDecorative = localFont({
   display: 'swap',
 });
 
+const { miniapp } = minikitConfig;
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Dash Trade",
-    description: "Dash turns decisions into instant execution.",
+    title: miniapp.ogTitle,
+    description: miniapp.ogDescription,
     openGraph: {
-      title: 'Dash Trade',
-      description: 'Dash turns decisions into instant execution',
-      url: 'https://dash-trading.vercel.app',
-      siteName: 'Dash',
+      title: miniapp.ogTitle,
+      description: miniapp.ogDescription,
+      url: miniapp.homeUrl,
+      siteName: miniapp.name,
       images: [
         {
-          url: '/images/og-banner.png',
+          url: miniapp.ogImageUrl,
           width: 1200,
           height: 630,
-          alt: 'Dash Banner',
+          alt: `${miniapp.name} Banner`,
         },
       ],
       locale: 'en_US',
@@ -50,34 +53,34 @@ export async function generateMetadata(): Promise<Metadata> {
       'base:app_id': '69761cb63a92926b661fd4e5',
       'fc:miniapp': JSON.stringify({
         version: 'next',
-        imageUrl: 'https://dash-trading.vercel.app/og-banner.png',
+        imageUrl: miniapp.heroImageUrl,
         button: {
-          title: `Launch Dash Trade`,
+          title: `Launch ${miniapp.name}`,
           action: {
             type: 'launch_miniapp',
-            name: 'Dash Trade',
-            url: 'https://dash-trading.vercel.app/',
-            splashImageUrl: 'https://dash-trading.vercel.app/og-banner.png',
-            splashBackgroundColor: '#000000',
+            name: miniapp.name,
+            url: miniapp.homeUrl,
+            splashImageUrl: miniapp.splashImageUrl,
+            splashBackgroundColor: miniapp.splashBackgroundColor,
           },
         },
       }),
       'fc:frame': 'vNext',
-      'fc:frame:image': 'https://dash-trading.vercel.app/api/frame/image?view=main',
+      'fc:frame:image': `${miniapp.homeUrl}/api/frame/image?view=main`,
       'fc:frame:image:aspect_ratio': '1.91:1',
-      'fc:frame:post_url': 'https://dash-trading.vercel.app/api/frame',
+      'fc:frame:post_url': `${miniapp.homeUrl}/api/frame`,
       'fc:frame:button:1': '📊 Chart',
       'fc:frame:button:1:action': 'post',
-      'fc:frame:button:1:target': 'https://dash-trading.vercel.app/api/frame?action=chart',
+      'fc:frame:button:1:target': `${miniapp.homeUrl}/api/frame?action=chart`,
       'fc:frame:button:2': '🔗 Connect',
       'fc:frame:button:2:action': 'post',
-      'fc:frame:button:2:target': 'https://dash-trading.vercel.app/api/frame?action=connect',
+      'fc:frame:button:2:target': `${miniapp.homeUrl}/api/frame?action=connect`,
       'fc:frame:button:3': '💰 Claim USDC',
       'fc:frame:button:3:action': 'post',
-      'fc:frame:button:3:target': 'https://dash-trading.vercel.app/api/frame?action=claim',
+      'fc:frame:button:3:target': `${miniapp.homeUrl}/api/frame?action=claim`,
       'fc:frame:button:4': '🪙 Coins',
       'fc:frame:button:4:action': 'post',
-      'fc:frame:button:4:target': 'https://dash-trading.vercel.app/api/frame?action=coins',
+      'fc:frame:button:4:target': `${miniapp.homeUrl}/api/frame?action=coins`,
     },
   };
 }
