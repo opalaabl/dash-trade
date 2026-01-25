@@ -19,21 +19,21 @@ export const minikitConfig = {
     subtitle: "One Look. One Tap. One Trade.",
     description: "Dash turns decisions into instant execution",
     screenshotUrls: [
-      `${ROOT_URL}/assets/TapPosition.png`,
-      `${ROOT_URL}/assets/TapProfit.png`,
-      `${ROOT_URL}/assets/DEX.png`
+      `${ROOT_URL}/TapPosition.png`,
+      `${ROOT_URL}/TapProfit.png`,
+      `${ROOT_URL}/DEX.png`
     ],
     iconUrl: `${ROOT_URL}/dash-polos.png`,
-    splashImageUrl: `${ROOT_URL}/assets/og-banner.png`,
+    splashImageUrl: `${ROOT_URL}/og-banner.png`,
     splashBackgroundColor: "#000000",
     homeUrl: ROOT_URL,
     webhookUrl: `${ROOT_URL}/api/webhook`,
     primaryCategory: "finance",
     tags: ["trade", "tap-to-trade", "gasless", "defi"],
-    heroImageUrl: `${ROOT_URL}/assets/og-banner.png`,
+    heroImageUrl: `${ROOT_URL}/og-banner.png`,
     tagline: "One Look. One Tap. One Trade.",
     ogTitle: "Dash Trade",
     ogDescription: "Dash turns decisions into instant execution",
-    ogImageUrl: `${ROOT_URL}/assets/og-banner.png`,
+    ogImageUrl: `${ROOT_URL}/og-banner.png`,
   },
 } as const;
