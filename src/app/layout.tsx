@@ -47,7 +47,6 @@ export async function generateMetadata(): Promise<Metadata> {
       type: 'website',
     },
     other: {
-      'base:app_id': '697428183a92926b661fd294',
       'fc:miniapp': JSON.stringify({
         version: 'next',
         imageUrl: 'https://dash-trading.vercel.app/og-banner.png',
