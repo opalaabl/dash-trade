@@ -1,42 +1,48 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSendTransaction } from '@privy-io/react-auth';
-import { createPublicClient, encodeFunctionData, http, parseUnits, maxUint256 } from 'viem';
-import { baseSepolia } from 'wagmi/chains';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSendTransaction } from "@privy-io/react-auth";
+import {
+  createPublicClient,
+  encodeFunctionData,
+  http,
+  parseUnits,
+  maxUint256,
+} from "viem";
+import { baseSepolia } from "wagmi/chains";
 import {
   COLLATERAL_CONFIG,
   COLLATERAL_TOKENS,
   CollateralToken,
   isZeroAddress,
-} from '@/config/contracts';
-import { useActivePrivyWallet } from '@/features/wallet/hooks/useActivePrivyWallet';
+} from "@/config/contracts";
+import { useActivePrivyWallet } from "@/features/wallet/hooks/useActivePrivyWallet";
 
 const ERC20_ABI = [
   {
     inputs: [
-      { name: 'owner', type: 'address' },
-      { name: 'spender', type: 'address' },
+      { name: "owner", type: "address" },
+      { name: "spender", type: "address" },
     ],
-    name: 'allowance',
-    outputs: [{ name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
+    name: "allowance",
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
-      { name: 'spender', type: 'address' },
-      { name: 'amount', type: 'uint256' },
+      { name: "spender", type: "address" },
+      { name: "amount", type: "uint256" },
     ],
-    name: 'approve',
-    outputs: [{ name: '', type: 'bool' }],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    name: "approve",
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "nonpayable",
+    type: "function",
   },
 ] as const;
 
 type AllowanceState = Partial<Record<CollateralToken, bigint>>;
 
 const MAX_APPROVAL = maxUint256;
-const MIN_APPROVAL = '1'; // 1 token (per decimals)
+const MIN_APPROVAL = "1"; // 1 token (per decimals)
 
 export const useGlobalTradingActivation = () => {
   const { activeWallet, address } = useActivePrivyWallet();
@@ -48,8 +54,10 @@ export const useGlobalTradingActivation = () => {
   const allowancesRef = useRef<AllowanceState>({});
 
   const embeddedWallet = activeWallet;
-  const activeAddress = (address ?? embeddedWallet?.address) as `0x${string}` | undefined;
-  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://sepolia.base.org';
+  const activeAddress = (address ?? embeddedWallet?.address) as
+    | `0x${string}`
+    | undefined;
+  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || "https://sepolia.base.org";
   const publicClient = useMemo(
     () =>
       createPublicClient({
@@ -62,22 +70,25 @@ export const useGlobalTradingActivation = () => {
   const getValidTokens = useCallback(() => {
     return COLLATERAL_TOKENS.filter((token) => {
       const config = COLLATERAL_CONFIG[token];
-      return !isZeroAddress(config.address) && !isZeroAddress(config.stabilityFund);
+      return (
+        !isZeroAddress(config.address) && !isZeroAddress(config.stabilityFund)
+      );
     });
   }, []);
 
   const fetchAllowanceFor = useCallback(
     async (token: CollateralToken) => {
       if (!activeAddress) {
-        throw new Error('No active address');
+        throw new Error("No active address");
       }
 
       const config = COLLATERAL_CONFIG[token];
-      if (isZeroAddress(config.address) || isZeroAddress(config.stabilityFund)) return 0n;
+      if (isZeroAddress(config.address) || isZeroAddress(config.stabilityFund))
+        return 0n;
 
       const allowanceData = encodeFunctionData({
         abi: ERC20_ABI,
-        functionName: 'allowance',
+        functionName: "allowance",
         args: [activeAddress, config.stabilityFund],
       });
 
@@ -86,7 +97,7 @@ export const useGlobalTradingActivation = () => {
         data: allowanceData,
       });
 
-      return !result?.data || result.data === '0x' ? 0n : BigInt(result.data);
+      return !result?.data || result.data === "0x" ? 0n : BigInt(result.data);
     },
     [activeAddress, publicClient],
   );
@@ -110,20 +121,21 @@ export const useGlobalTradingActivation = () => {
             const config = COLLATERAL_CONFIG[token];
             const allowanceData = encodeFunctionData({
               abi: ERC20_ABI,
-              functionName: 'allowance',
+              functionName: "allowance",
               args: [activeAddress, config.stabilityFund],
             });
             const result = await walletClient.request({
-              method: 'eth_call',
+              method: "eth_call",
               params: [
                 {
                   to: config.address,
                   data: allowanceData,
                 },
-                'latest',
+                "latest",
               ],
             });
-            next[token] = !result || result === '0x' ? 0n : BigInt(result as string);
+            next[token] =
+              !result || result === "0x" ? 0n : BigInt(result as string);
           } catch {
             // keep previous allowance if read fails
           }
@@ -146,10 +158,10 @@ export const useGlobalTradingActivation = () => {
       while (attempts < 30) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
         const receipt = await walletClient.request({
-          method: 'eth_getTransactionReceipt',
+          method: "eth_getTransactionReceipt",
           params: [txHash],
         });
-        if (receipt && (receipt as any).status === '0x1') {
+        if (receipt && (receipt as any).status === "0x1") {
           return;
         }
         attempts += 1;
@@ -161,23 +173,26 @@ export const useGlobalTradingActivation = () => {
   const approveToken = useCallback(
     async (token: CollateralToken, amount: bigint = MAX_APPROVAL) => {
       if (!embeddedWallet || !activeAddress) {
-        throw new Error('Embedded wallet not connected');
+        throw new Error("Embedded wallet not connected");
       }
 
       const config = COLLATERAL_CONFIG[token];
-      if (isZeroAddress(config.address) || isZeroAddress(config.stabilityFund)) {
+      if (
+        isZeroAddress(config.address) ||
+        isZeroAddress(config.stabilityFund)
+      ) {
         return;
       }
 
       await embeddedWallet.switchChain(baseSepolia.id);
       const walletClient = await embeddedWallet.getEthereumProvider();
       if (!walletClient) {
-        throw new Error('Could not get wallet client');
+        throw new Error("Could not get wallet client");
       }
 
       const data = encodeFunctionData({
         abi: ERC20_ABI,
-        functionName: 'approve',
+        functionName: "approve",
         args: [config.stabilityFund, amount],
       });
       const txResult = await sendTransaction(
@@ -189,16 +204,19 @@ export const useGlobalTradingActivation = () => {
         { sponsor: true },
       );
       let txHash: `0x${string}` | undefined;
-      if (typeof txResult === 'string') {
+      if (typeof txResult === "string") {
         txHash = txResult as `0x${string}`;
-      } else if (txResult && typeof txResult === 'object') {
-        const maybeHash = (txResult as any).transactionHash || (txResult as any).hash;
-        if (typeof maybeHash === 'string') {
+      } else if (txResult && typeof txResult === "object") {
+        const maybeHash =
+          (txResult as any).transactionHash || (txResult as any).hash;
+        if (typeof maybeHash === "string") {
           txHash = maybeHash as `0x${string}`;
         }
       }
       if (!txHash) {
-        throw new Error(`Approval transaction for ${token} failed to return a hash`);
+        throw new Error(
+          `Approval transaction for ${token} failed to return a hash`,
+        );
       }
 
       await waitForReceipt(txHash);
@@ -209,7 +227,13 @@ export const useGlobalTradingActivation = () => {
         throw new Error(`Approval for ${token} not confirmed on-chain yet`);
       }
     },
-    [embeddedWallet, activeAddress, sendTransaction, waitForReceipt, fetchAllowanceFor],
+    [
+      embeddedWallet,
+      activeAddress,
+      sendTransaction,
+      waitForReceipt,
+      fetchAllowanceFor,
+    ],
   );
 
   const approveAll = useCallback(
@@ -235,9 +259,11 @@ export const useGlobalTradingActivation = () => {
   const hasAllowance = useCallback(
     (token: CollateralToken, requiredAmount?: bigint) => {
       const config = COLLATERAL_CONFIG[token];
-      if (isZeroAddress(config.address) || isZeroAddress(config.stabilityFund)) return true;
+      if (isZeroAddress(config.address) || isZeroAddress(config.stabilityFund))
+        return true;
       const current = allowances[token] ?? 0n;
-      const required = requiredAmount ?? parseUnits(MIN_APPROVAL, config.decimals);
+      const required =
+        requiredAmount ?? parseUnits(MIN_APPROVAL, config.decimals);
       return current >= required;
     },
     [allowances],
@@ -266,7 +292,7 @@ export const useGlobalTradingActivation = () => {
     isLoading,
     isApproving,
     isInitialized,
-    isReady: isInitialized && !!activeAddress,
+    isReady: !activeAddress ? true : isInitialized && !!activeAddress,
     refetchAllowances,
     approveAll,
     approveToken,

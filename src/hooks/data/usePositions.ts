@@ -2,10 +2,15 @@
  * Hook to fetch and manage user positions
  */
 
-import { useReadContract } from 'wagmi';
-import { CollateralToken, getCollateralConfig, isZeroAddress } from '@/config/contracts';
-import PositionManagerABI from '@/contracts/abis/PositionManager.json';
-import { useEmbeddedWallet } from '@/features/wallet/hooks/useEmbeddedWallet';
+import { useReadContract } from "wagmi";
+import { useCallback } from "react";
+import {
+  CollateralToken,
+  getCollateralConfig,
+  isZeroAddress,
+} from "@/config/contracts";
+import PositionManagerABI from "@/contracts/abis/PositionManager.json";
+import { useEmbeddedWallet } from "@/features/wallet/hooks/useEmbeddedWallet";
 
 export interface Position {
   id: bigint;
@@ -28,7 +33,7 @@ export interface PositionRef {
 /**
  * Hook to get all user positions
  */
-export function useUserPositions(token: CollateralToken = 'USDC') {
+export function useUserPositions(token: CollateralToken = "USDC") {
   const { address } = useEmbeddedWallet();
   const collateralConfig = getCollateralConfig(token);
 
@@ -39,7 +44,7 @@ export function useUserPositions(token: CollateralToken = 'USDC') {
   } = useReadContract({
     address: collateralConfig.positionManager,
     abi: PositionManagerABI,
-    functionName: 'getUserPositions',
+    functionName: "getUserPositions",
     args: address ? [address] : undefined,
     query: {
       enabled: !!address && !isZeroAddress(collateralConfig.positionManager),
@@ -49,7 +54,7 @@ export function useUserPositions(token: CollateralToken = 'USDC') {
 
   return {
     positionIds: (positionIds as bigint[]) || [],
-    isLoading: isLoadingIds,
+    isLoading: !!address && isLoadingIds,
     refetch: refetchIds,
   };
 }
@@ -58,37 +63,49 @@ export function useUserPositions(token: CollateralToken = 'USDC') {
  * Hook to get all user positions across all collateral tokens
  */
 export function useAllUserPositions() {
-  const usdc = useUserPositions('USDC');
-  const idrx = useUserPositions('IDRX');
+  const usdc = useUserPositions("USDC");
+  const idrx = useUserPositions("IDRX");
 
   const positionRefs: PositionRef[] = [
-    ...(usdc.positionIds || []).map((id) => ({ id, collateralToken: 'USDC' as const })),
-    ...(idrx.positionIds || []).map((id) => ({ id, collateralToken: 'IDRX' as const })),
+    ...(usdc.positionIds || []).map((id) => ({
+      id,
+      collateralToken: "USDC" as const,
+    })),
+    ...(idrx.positionIds || []).map((id) => ({
+      id,
+      collateralToken: "IDRX" as const,
+    })),
   ];
+
+  const refetch = useCallback(() => {
+    usdc.refetch?.();
+    idrx.refetch?.();
+  }, [usdc.refetch, idrx.refetch]);
 
   return {
     positionRefs,
     isLoading: usdc.isLoading || idrx.isLoading,
-    refetch: () => {
-      usdc.refetch?.();
-      idrx.refetch?.();
-    },
+    refetch,
   };
 }
 
 /**
  * Hook to get single position details
  */
-export function usePosition(positionId: bigint | undefined, token: CollateralToken = 'USDC') {
+export function usePosition(
+  positionId: bigint | undefined,
+  token: CollateralToken = "USDC",
+) {
   const collateralConfig = getCollateralConfig(token);
   const { data, isLoading, refetch } = useReadContract({
     address: collateralConfig.positionManager,
     abi: PositionManagerABI,
-    functionName: 'getPosition',
+    functionName: "getPosition",
     args: positionId !== undefined ? [positionId] : undefined,
     query: {
       enabled:
-        positionId !== undefined && !isZeroAddress(collateralConfig.positionManager),
+        positionId !== undefined &&
+        !isZeroAddress(collateralConfig.positionManager),
       refetchInterval: 5000, // Refetch every 5 seconds
     },
   });
@@ -105,13 +122,13 @@ export function usePosition(positionId: bigint | undefined, token: CollateralTok
   // Try to parse as object first (wagmi v2 returns objects for structs)
   let position: Position;
 
-  if (typeof data === 'object' && !Array.isArray(data)) {
+  if (typeof data === "object" && !Array.isArray(data)) {
     // Data is returned as an object with named properties
     const dataObj = data as any;
 
     // Check if data has properties or is just keys (0,1,2,3...)
     // Wagmi sometimes returns object with numeric keys like {0: value, 1: value2}
-    const hasNumericKeys = '0' in dataObj && '1' in dataObj;
+    const hasNumericKeys = "0" in dataObj && "1" in dataObj;
 
     if (hasNumericKeys) {
       // Object with numeric keys - treat as array
@@ -179,8 +196,12 @@ export function usePosition(positionId: bigint | undefined, token: CollateralTok
  * Hook to get all user positions with full details
  * Fetches each position individually since batch function may not exist
  */
-export function useUserPositionsWithDetails(token: CollateralToken = 'USDC') {
-  const { positionIds, isLoading: isLoadingIds, refetch: refetchIds } = useUserPositions(token);
+export function useUserPositionsWithDetails(token: CollateralToken = "USDC") {
+  const {
+    positionIds,
+    isLoading: isLoadingIds,
+    refetch: refetchIds,
+  } = useUserPositions(token);
 
   // For now, just use the position IDs and fetch them individually in the component
   // This is a simpler approach that doesn't require a batch function
