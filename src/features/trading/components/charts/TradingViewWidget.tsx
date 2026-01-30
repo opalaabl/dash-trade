@@ -33,11 +33,12 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = memo(({ symbol }) =>
         ) || (window.innerWidth < 768 && 'ontouchstart' in window);
 
       const tvSymbol = symbol.includes(':') ? symbol : `BINANCE:${symbol}`;
+      const isIdxSymbol = tvSymbol.startsWith('IDX:');
 
       new (window as any).TradingView.widget({
         autosize: true,
         symbol: tvSymbol,
-        interval: '1', // 1m default
+        interval: isIdxSymbol ? 'D' : '1', // IDX locked to 1D, others default to 1m
         timezone: 'Asia/Jakarta',
         theme: 'dark',
         style: '1',
@@ -50,13 +51,21 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = memo(({ symbol }) =>
         hotlist: false,
         calendar: false,
         container_id: widgetContainer.id,
-        disabled_features: ['use_localstorage_for_settings', 'timeframes_toolbar'],
-        enabled_features: [
-          'header_widget',
-          'header_resolutions',
-          'header_interval_dialog_button',
-          'show_interval_dialog_on_key_press',
+        disabled_features: [
+          'use_localstorage_for_settings',
+          'timeframes_toolbar',
+          ...(isIdxSymbol
+            ? ['header_resolutions', 'header_interval_dialog_button', 'show_interval_dialog_on_key_press']
+            : []),
         ],
+        enabled_features: isIdxSymbol
+          ? ['header_widget']
+          : [
+              'header_widget',
+              'header_resolutions',
+              'header_interval_dialog_button',
+              'show_interval_dialog_on_key_press',
+            ],
         overrides: {
           'paneProperties.background': '#171B26',
           'paneProperties.backgroundGradientStartColor': '#171B26',

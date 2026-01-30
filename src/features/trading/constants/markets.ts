@@ -132,6 +132,27 @@ export const ALL_MARKETS: Market[] = [
     maxLeverage: 100,
   },
   {
+    symbol: 'IHSG',
+    tradingViewSymbol: 'IDX:COMPOSITE',
+    logoUrl: letterLogo('IHSG', '#FCD34D', '#0B0F1A'),
+    category: 'indices',
+    maxLeverage: 100,
+  },
+  {
+    symbol: 'BBCA',
+    tradingViewSymbol: 'IDX:BBCA',
+    logoUrl: letterLogo('BBCA', '#93C5FD', '#0B0F1A'),
+    category: 'stocks',
+    maxLeverage: 100,
+  },
+  {
+    symbol: 'BBRI',
+    tradingViewSymbol: 'IDX:BBRI',
+    logoUrl: letterLogo('BBRI', '#A7F3D0', '#0B0F1A'),
+    category: 'stocks',
+    maxLeverage: 100,
+  },
+  {
     symbol: 'USDIDR',
     tradingViewSymbol: 'PYTH:USDIDR',
     logoUrl: letterLogo('IDR', '#FDE68A', '#0B0F1A'),

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { formatMarketPair } from '@/features/trading/lib/marketUtils';
+import { formatMarketPair, isIdrQuotedSymbol } from '@/features/trading/lib/marketUtils';
 import { PositionRef, usePosition } from '@/hooks/data/usePositions';
 import { usePrice } from '@/hooks/data/usePrices';
 import { useGaslessClose } from '@/features/trading/hooks/useGaslessClose';
@@ -92,6 +92,15 @@ const PositionRow = ({
     : entryPrice * (1 + liqPriceRatio);
 
   const pnlColor = unrealizedPnl >= 0 ? 'text-green-400' : 'text-red-400';
+  const isIdrMarket = isIdrQuotedSymbol(position.symbol);
+  const formatQuotePrice = (value: number) => {
+    if (!Number.isFinite(value)) return isIdrMarket ? 'Rp --' : '$--';
+    const formatted = value.toLocaleString(isIdrMarket ? 'id-ID' : undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    return isIdrMarket ? `Rp ${formatted}` : `$${formatted}`;
+  };
 
   // Get crypto logo URL from ALL_MARKETS
   const getMarketLogo = (symbol: string) => {
@@ -181,13 +190,7 @@ const PositionRow = ({
 
       {/* Entry Price */}
       <td className="px-4 py-3">
-        <span className="text-white">
-          $
-          {entryPrice.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </span>
+        <span className="text-white">{formatQuotePrice(entryPrice)}</span>
       </td>
     </tr>
   );

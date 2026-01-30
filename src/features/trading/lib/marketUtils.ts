@@ -15,6 +15,7 @@ const COMMODITY_LIKE = ['XAU', 'XAG', 'WTI', 'BRENT'];
 
 export function formatMarketPair(symbol: string): string {
   const upper = symbol.toUpperCase();
+  if (['IHSG', 'BBCA', 'BBRI'].includes(upper)) return upper;
   if (upper.startsWith('USD') && upper.length === 6) {
     const quote = upper.slice(3);
     return `USD/${quote}`;
@@ -24,6 +25,11 @@ export function formatMarketPair(symbol: string): string {
     return `${base}/USD`;
   }
   return `${symbol}/USD`;
+}
+
+export function isIdrQuotedSymbol(symbol: string): boolean {
+  const upper = symbol.toUpperCase();
+  return upper === 'USDIDR' || upper === 'IHSG' || upper === 'BBCA' || upper === 'BBRI';
 }
 
 export function inferMarketCategory(symbol: string): Market['category'] {

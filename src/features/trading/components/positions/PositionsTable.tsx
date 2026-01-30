@@ -148,7 +148,7 @@ const PositionsTable = ({
           </TableHeader>
           <TableBody>
             {openPositionsCount === 0 && (
-              <TableRow className="border-b border-gray-800">
+              <TableRow className="border-b border-gray-800 hover:bg-transparent">
                 <TableCell colSpan={9} className="text-center py-16 text-gray-500">
                   No open positions
                 </TableCell>

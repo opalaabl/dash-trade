@@ -5,7 +5,7 @@ import { usePosition } from '@/hooks/data/usePositions';
 import { usePrice } from '@/hooks/data/usePrices';
 import { useTPSLContext } from '@/contexts/TPSLContext';
 import { ALL_MARKETS } from '@/features/trading/constants/markets';
-import { formatMarketPair } from '@/features/trading/lib/marketUtils';
+import { formatMarketPair, isIdrQuotedSymbol } from '@/features/trading/lib/marketUtils';
 import { formatUnits } from 'viem';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -101,7 +101,7 @@ const PositionRow = ({
     : entryPrice * (1 + liqPriceRatio);
 
   const pnlColor = unrealizedPnl >= 0 ? 'text-emerald-400' : 'text-red-400';
-  const isIdrMarket = position.symbol.toUpperCase() === 'USDIDR';
+  const isIdrMarket = isIdrQuotedSymbol(position.symbol);
   const formatQuotePrice = (value: number) => {
     if (!Number.isFinite(value)) return isIdrMarket ? 'Rp --' : '$--';
     const formatted = value.toLocaleString(isIdrMarket ? 'id-ID' : undefined, {
